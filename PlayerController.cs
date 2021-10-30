@@ -64,6 +64,8 @@ public class PlayerController : MonoBehaviour
 
         totalScoreP1 = 0;
         totalScoreP2 = 0;
+
+        scoreTextP1.color = Color.green;
     }
 
     // Update is called once per frame
@@ -198,6 +200,9 @@ public class PlayerController : MonoBehaviour
             }
 
             p1Turn = false;
+            // Change the color of the player text to know whose turn it is
+            scoreTextP2.color = Color.green;
+            scoreTextP1.color = Color.black;
         }
         else
         {
@@ -219,6 +224,8 @@ public class PlayerController : MonoBehaviour
             }
 
             p1Turn = true;
+            scoreTextP1.color = Color.green;
+            scoreTextP2.color = Color.black;
         }
     }
 }
