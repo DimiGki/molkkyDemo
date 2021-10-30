@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,20 +19,32 @@ public class PlayerController : MonoBehaviour
     private Rigidbody piece10Rb;
     private Rigidbody piece11Rb;
     private Rigidbody piece12Rb;
-    private float yPosFallenPieceLimit = 0.51f;
+    private GameManager gameManager;
+
+    private float yPosFallenPieceLimit = 0.53f;
     private int waitSeconds = 2;
     private int totalScoreP1;
+    private int p1MissedThrows = 0;
+    private bool p1Turn = true;
+    private int totalScoreP2;
+    private int p2MissedThrows = 0;
 
-    public float throwForce = 10;
-    public float startXRotationRelative = 0; // Up or down throw
-    public float startYRotationRelative = 0; // Right or left throw
-    public float startZRotationRelative = 0; // 0 standing 90 straight
-    public int turn = 0;
+    public TextMeshProUGUI scoreTextP1;
+    public TextMeshProUGUI scoreTextP2;
+    public Slider powerSlider;
+    public Slider heightSlider;
+    public Slider turnSlider;
+    public Slider positionSlider;
+
+    public float throwForce;
+    public float startXRotationRelative; // Up or down throw
+    public float startYRotationRelative; // Right or left throw
+    public float startZRotationRelative; // 0 standing 90 straight
 
     // Start is called before the first frame update
     void Start()
     {
-        throwPieceRb = GetComponent<Rigidbody>();
+        gameManager = GameObject.Find("Game Manager").GetComponent<GameManager>();
         piece1Rb = GameObject.FindGameObjectWithTag("1").GetComponent<Rigidbody>();
         piece2Rb = GameObject.FindGameObjectWithTag("2").GetComponent<Rigidbody>();
         piece3Rb = GameObject.FindGameObjectWithTag("3").GetComponent<Rigidbody>();
@@ -44,23 +58,34 @@ public class PlayerController : MonoBehaviour
         piece11Rb = GameObject.FindGameObjectWithTag("11").GetComponent<Rigidbody>();
         piece12Rb = GameObject.FindGameObjectWithTag("12").GetComponent<Rigidbody>();
 
+        throwPieceRb = GetComponent<Rigidbody>();
+
         throwPieceRb.useGravity = false;
+
         totalScoreP1 = 0;
+        totalScoreP2 = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))    // When space is hit the piece is thrown
+        // Assigning throw values from the sliders
+        throwForce = powerSlider.value;
+        startXRotationRelative = heightSlider.value;
+        startYRotationRelative = turnSlider.value;
+        startZRotationRelative = positionSlider.value;
+
+        // When space is hit the piece is thrown
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             throwPieceRb.useGravity = true;
+
             // Setting the throwing piece to the players configurations
             throwPieceRb.transform.rotation = Quaternion.Euler(startXRotationRelative, startYRotationRelative, startZRotationRelative);
+
             // z is 1 in the AddRealativeForce so that the throw is only forward
             throwPieceRb.AddRelativeForce(startXRotationRelative, startYRotationRelative * throwForce, 1 * throwForce, ForceMode.Impulse);
             StartCoroutine(CheckPieces());
-            turn++;
-            Debug.Log($"Turn number: { turn }.");
         }
     }
 
@@ -83,11 +108,18 @@ public class PlayerController : MonoBehaviour
              piece11Rb.IsSleeping() &&
              piece12Rb.IsSleeping())
         {
-            Debug.Log("No piece move");
+
             int turnScore = CalculateScore();
-            totalScoreP1 += turnScore;
-            Debug.Log($"Turns score is: { turnScore }.");
-            Debug.Log($"Total score is: { totalScoreP1 }.");
+
+            CalculatePlayerScore(turnScore);
+
+            scoreTextP1.text = $"P1 Score: { totalScoreP1, 3 }  | Missed: { p1MissedThrows }";
+            scoreTextP2.text = $"P2 Score: { totalScoreP2, 3 }  | Missed: { p2MissedThrows }";
+
+            if (totalScoreP1 == 50 || p1MissedThrows == 3 || totalScoreP2 == 50 || p2MissedThrows == 3)
+            {
+                gameManager.GameOver();
+            }
         }
         else
         {
@@ -95,7 +127,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Calculate score
     int CalculateScore()
     {
         int fallenPieces = 0;
@@ -128,7 +159,7 @@ public class PlayerController : MonoBehaviour
     void ResetPieces()
     {
         // Reseting the throwing piece
-        throwPieceRb.position = new Vector3(0, 3, -8.73f);
+        throwPieceRb.position = new Vector3(0, 3, 0);
         throwPieceRb.transform.rotation = Quaternion.Euler(0, 0, 90);
         throwPieceRb.useGravity = false;
 
@@ -137,10 +168,57 @@ public class PlayerController : MonoBehaviour
         {
             float previousX = GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position.x;
             float previousZ = GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position.z;
-            float recoveryHight = 1.5f;
+            float recoveryHeight = 1;
 
-            GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position = new Vector3(previousX, recoveryHight, previousZ);
-            GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.rotation = Quaternion.Euler(0, 0, 0);
+            GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position = new Vector3(previousX, recoveryHeight, previousZ);
+            GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.rotation = Quaternion.Euler(0, -180, 0);
+        }
+    }
+
+    void CalculatePlayerScore(int turnScore)
+    {
+        if (p1Turn == true)
+        {
+            // Check for missed shot
+            if (turnScore == 0)
+            {
+                p1MissedThrows++;
+            }
+            else
+            {
+                p1MissedThrows = 0;
+            }
+
+            totalScoreP1 += turnScore;
+            
+            // Check if total score is over 50 and drop to 25 if it is
+            if (totalScoreP1 > 50)
+            {
+                totalScoreP1 = 25;
+            }
+
+            p1Turn = false;
+        }
+        else
+        {
+            if (turnScore == 0)
+            {
+                p2MissedThrows++;
+            }
+            else
+            {
+                p2MissedThrows = 0;
+            }
+
+            totalScoreP2 += turnScore;
+
+            // Check if total score is over 50 and drop to 25 if it is
+            if (totalScoreP2 > 50)
+            {
+                totalScoreP2 = 25;
+            }
+
+            p1Turn = true;
         }
     }
 }
