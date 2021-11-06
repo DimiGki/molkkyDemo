@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public Button restartButton;
     public TextMeshProUGUI scoreTextP1;
     public TextMeshProUGUI scoreTextP2;
+    public TextMeshProUGUI winText;
     public GameObject titleScreen;
     public GameObject gameOverText;
     public GameObject pieces;
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
     {
         restartButton.gameObject.SetActive(true);
         gameOverText.gameObject.SetActive(true);
+        winText.gameObject.SetActive(true);
 
         thowingpiece.gameObject.SetActive(false);
         pieces.gameObject.SetActive(false);

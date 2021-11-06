@@ -28,10 +28,11 @@ public class PlayerController : MonoBehaviour
     private bool p1Turn = true;
     private int totalScoreP2;
     private int p2MissedThrows = 0;
-    private bool canThrow = true;
+    private bool canThrow;
 
     public TextMeshProUGUI scoreTextP1;
     public TextMeshProUGUI scoreTextP2;
+    public TextMeshProUGUI winText;
     public Slider powerSlider;
     public Slider heightSlider;
     public Slider turnSlider;
@@ -62,6 +63,7 @@ public class PlayerController : MonoBehaviour
         throwPieceRb = GetComponent<Rigidbody>();
 
         throwPieceRb.useGravity = false;
+        canThrow = true;
 
         totalScoreP1 = 0;
         totalScoreP2 = 0;
@@ -78,7 +80,7 @@ public class PlayerController : MonoBehaviour
         startYRotationRelative = turnSlider.value;
         startZRotationRelative = positionSlider.value;
 
-        // When space is hit the piece is thrown
+        // When space is hit and there is no other thow at the moment the piece is thrown
         if (Input.GetKeyDown(KeyCode.Space) && canThrow)
         {
             canThrow = false;
@@ -122,6 +124,14 @@ public class PlayerController : MonoBehaviour
 
             if (totalScoreP1 == 50 || p1MissedThrows == 3 || totalScoreP2 == 50 || p2MissedThrows == 3)
             {
+                if (totalScoreP1 == 50 || p2MissedThrows == 3)
+                {
+                    winText.text = "Player 1 wins!!!";
+                }
+                else if (totalScoreP2 == 50 || p1MissedThrows == 3)
+                {
+                    winText.text = "Player 2 wins!!!";
+                }
                 gameManager.GameOver();
             }
         }
