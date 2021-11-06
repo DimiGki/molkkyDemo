@@ -20,20 +20,22 @@ public class GameManager : MonoBehaviour
     public Slider heightSlider;
     public Slider turnSlider;
     public Slider positionSlider;
-    
-    /* Unity functions not used in this script
+
     // Start is called before the first frame update
     void Start()
     {
 
     }
-
+    
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
-    */
+
 
     public void StartGame()
     {
