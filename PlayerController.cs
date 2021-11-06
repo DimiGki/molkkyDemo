@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private bool p1Turn = true;
     private int totalScoreP2;
     private int p2MissedThrows = 0;
+    private bool canThrow = true;
 
     public TextMeshProUGUI scoreTextP1;
     public TextMeshProUGUI scoreTextP2;
@@ -78,8 +79,9 @@ public class PlayerController : MonoBehaviour
         startZRotationRelative = positionSlider.value;
 
         // When space is hit the piece is thrown
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && canThrow)
         {
+            canThrow = false;
             throwPieceRb.useGravity = true;
 
             // Setting the throwing piece to the players configurations
@@ -175,6 +177,7 @@ public class PlayerController : MonoBehaviour
             GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position = new Vector3(previousX, recoveryHeight, previousZ);
             GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.rotation = Quaternion.Euler(0, -180, 0);
         }
+        canThrow = true;
     }
 
     void CalculatePlayerScore(int turnScore)
