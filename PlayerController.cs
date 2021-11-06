@@ -114,23 +114,21 @@ public class PlayerController : MonoBehaviour
              piece11Rb.IsSleeping() &&
              piece12Rb.IsSleeping())
         {
-
             int turnScore = CalculateScore();
-
             CalculatePlayerScore(turnScore);
 
-            scoreTextP1.text = $"P1 Score: { totalScoreP1, 3 }  | Missed: { p1MissedThrows }";
-            scoreTextP2.text = $"P2 Score: { totalScoreP2, 3 }  | Missed: { p2MissedThrows }";
+            scoreTextP1.text = $"P1 Score: { totalScoreP1, 3 }   Missed: { p1MissedThrows }";
+            scoreTextP2.text = $"P2 Score: { totalScoreP2, 3 }   Missed: { p2MissedThrows }";
 
             if (totalScoreP1 == 50 || p1MissedThrows == 3 || totalScoreP2 == 50 || p2MissedThrows == 3)
             {
                 if (totalScoreP1 == 50 || p2MissedThrows == 3)
                 {
-                    winText.text = "Player 1 wins!!!";
+                    winText.text = "Player 1 wins";
                 }
                 else if (totalScoreP2 == 50 || p1MissedThrows == 3)
                 {
-                    winText.text = "Player 2 wins!!!";
+                    winText.text = "Player 2 wins";
                 }
                 gameManager.GameOver();
             }
@@ -187,6 +185,7 @@ public class PlayerController : MonoBehaviour
             GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position = new Vector3(previousX, recoveryHeight, previousZ);
             GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.rotation = Quaternion.Euler(0, -180, 0);
         }
+
         canThrow = true;
     }
 
