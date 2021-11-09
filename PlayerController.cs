@@ -71,6 +71,7 @@ public class PlayerController : MonoBehaviour
 
         scoreTextP1.color = Color.green;
 
+        // Listeners to get the current slide value for the throwing piece
         positionSlider.onValueChanged.AddListener(delegate { ChangePosition(); });
         turnSlider.onValueChanged.AddListener(delegate { ChangeTurn(); });
     }
@@ -265,5 +266,4 @@ public class PlayerController : MonoBehaviour
         startYRotationRelative = -turnSlider.value;
         throwPieceRb.transform.rotation = Quaternion.Euler(startXRotationRelative, startYRotationRelative, startZRotationRelative);
     }
-
 }
