@@ -94,6 +94,10 @@ public class PlayerController : MonoBehaviour
 
             canThrow = false;
             throwPieceRb.useGravity = true;
+            powerSlider.interactable = false;
+            heightSlider.interactable = false;
+            turnSlider.interactable = false;
+            positionSlider.interactable = false;
 
             // Setting the throwing piece to the players configurations
             throwPieceRb.transform.rotation = Quaternion.Euler(startXRotationRelative, startYRotationRelative, startZRotationRelative);
@@ -186,7 +190,7 @@ public class PlayerController : MonoBehaviour
     {
         // Reseting the throwing piece
         throwPieceRb.position = new Vector3(0, 3, 0);
-        throwPieceRb.transform.rotation = Quaternion.Euler(0, 0, positionSlider.value);
+        throwPieceRb.transform.rotation = Quaternion.Euler(0, turnSlider.value, positionSlider.value);
         throwPieceRb.useGravity = false;
 
         // Reseting the pieces
@@ -201,6 +205,10 @@ public class PlayerController : MonoBehaviour
         }
 
         canThrow = true;
+        powerSlider.interactable = true;
+        heightSlider.interactable = true;
+        turnSlider.interactable = true;
+        positionSlider.interactable = true;
     }
 
     void CalculatePlayerScore(int turnScore)
