@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     private int totalScoreP2;
     private int p2MissedThrows = 0;
     private bool canThrow;
+    private int timesCheckPiecesRun = 0;
 
     public TextMeshProUGUI scoreTextP1;
     public TextMeshProUGUI scoreTextP2;
@@ -125,7 +126,8 @@ public class PlayerController : MonoBehaviour
              piece9Rb.IsSleeping() &&
              piece10Rb.IsSleeping() &&
              piece11Rb.IsSleeping() &&
-             piece12Rb.IsSleeping())
+             piece12Rb.IsSleeping() ||
+             timesCheckPiecesRun == 10)
         {
             int turnScore = CalculateScore();
             CalculatePlayerScore(turnScore);
@@ -149,6 +151,9 @@ public class PlayerController : MonoBehaviour
         else
         {
             StartCoroutine(CheckPieces());
+            // Checking how many times the function was used so that it does
+            // not enter an infinite loop
+            timesCheckPiecesRun++;
         }
     }
 
