@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI scoreTextP1;
     public TextMeshProUGUI scoreTextP2;
     public TextMeshProUGUI winText;
+    public TextMeshProUGUI currentThrowScore;
     public Slider powerSlider;
     public Slider heightSlider;
     public Slider turnSlider;
@@ -69,6 +70,9 @@ public class PlayerController : MonoBehaviour
         totalScoreP2 = 0;
 
         scoreTextP1.color = Color.green;
+
+        positionSlider.onValueChanged.AddListener(delegate { ChangePosition(); });
+        turnSlider.onValueChanged.AddListener(delegate { ChangeTurn(); });
     }
 
     // Update is called once per frame
@@ -83,6 +87,10 @@ public class PlayerController : MonoBehaviour
         // When space is hit and there is no other thow at the moment the piece is thrown
         if (Input.GetKeyDown(KeyCode.Space) && canThrow)
         {
+            // Reseting the current score object
+            currentThrowScore.gameObject.SetActive(false);
+            currentThrowScore.CrossFadeAlpha(1.0f, 0f, false);
+
             canThrow = false;
             throwPieceRb.useGravity = true;
 
@@ -164,6 +172,11 @@ public class PlayerController : MonoBehaviour
             score = fallenPieces;
         }
 
+        // Showing the score from current throw and fade
+        currentThrowScore.text = $"{score}";
+        currentThrowScore.gameObject.SetActive(true);
+        currentThrowScore.CrossFadeAlpha(0.0f, 3f, false);
+
         ResetPieces();
         return score;
     }
@@ -172,7 +185,7 @@ public class PlayerController : MonoBehaviour
     {
         // Reseting the throwing piece
         throwPieceRb.position = new Vector3(0, 3, 0);
-        throwPieceRb.transform.rotation = Quaternion.Euler(0, 0, 90);
+        throwPieceRb.transform.rotation = Quaternion.Euler(0, 0, positionSlider.value);
         throwPieceRb.useGravity = false;
 
         // Reseting the pieces
@@ -180,7 +193,7 @@ public class PlayerController : MonoBehaviour
         {
             float previousX = GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position.x;
             float previousZ = GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position.z;
-            float recoveryHeight = 1;
+            float recoveryHeight = 1.2f;
 
             GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.position = new Vector3(previousX, recoveryHeight, previousZ);
             GameObject.FindGameObjectWithTag($"{pieceNumber}").transform.rotation = Quaternion.Euler(0, -180, 0);
@@ -240,4 +253,17 @@ public class PlayerController : MonoBehaviour
             scoreTextP2.color = Color.black;
         }
     }
+
+    void ChangePosition()
+    {
+        startZRotationRelative = positionSlider.value;
+        throwPieceRb.transform.rotation = Quaternion.Euler(startXRotationRelative, startYRotationRelative, startZRotationRelative);
+    }
+
+    void ChangeTurn()
+    {
+        startYRotationRelative = -turnSlider.value;
+        throwPieceRb.transform.rotation = Quaternion.Euler(startXRotationRelative, startYRotationRelative, startZRotationRelative);
+    }
+
 }
