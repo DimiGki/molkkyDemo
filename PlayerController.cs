@@ -131,6 +131,7 @@ public class PlayerController : MonoBehaviour
         {
             int turnScore = CalculateScore();
             CalculatePlayerScore(turnScore);
+            timesCheckPiecesRun = 0;
 
             scoreTextP1.text = $"P1 Score: { totalScoreP1, 3 }   Missed: { p1MissedThrows }";
             scoreTextP2.text = $"P2 Score: { totalScoreP2, 3 }   Missed: { p2MissedThrows }";
