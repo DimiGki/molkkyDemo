@@ -74,7 +74,7 @@ public class PlayerController : MonoBehaviour
 
         // Listeners to get the current slide value for the throwing piece
         positionSlider.onValueChanged.AddListener(delegate { ChangePosition(); });
-        turnSlider.onValueChanged.AddListener(delegate { ChangeTurn(); });
+        //turnSlider.onValueChanged.AddListener(delegate { ChangeTurn(); });
     }
 
     // Update is called once per frame
@@ -186,7 +186,7 @@ public class PlayerController : MonoBehaviour
         // Showing the score from current throw and fade
         currentThrowScore.text = $"{score}";
         currentThrowScore.gameObject.SetActive(true);
-        currentThrowScore.CrossFadeAlpha(0.0f, 3f, false);
+        currentThrowScore.CrossFadeAlpha(0.0f, 2f, false);
 
         ResetPieces();
         return score;
